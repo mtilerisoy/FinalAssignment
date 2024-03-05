@@ -55,6 +55,9 @@ class conv_block(nn.Module):
         self.conv1 = nn.Conv2d(in_c, out_c, kernel_size=3, padding=1)
         self.bn1 = nn.BatchNorm2d(out_c)
 
+        # ToDo: add a ReLU layer
+        # self.relu = nn.ReLU()
+
         self.conv2 = nn.Conv2d(out_c, out_c, kernel_size=3, padding=1)
         self.bn2 = nn.BatchNorm2d(out_c)
 
