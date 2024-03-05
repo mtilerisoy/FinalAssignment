@@ -4,6 +4,7 @@ avoid any global variables.
 """
 from model import Model
 from torchvision.datasets import Cityscapes
+import torchvision.transforms as transforms
 from argparse import ArgumentParser
 
 
@@ -17,8 +18,15 @@ def get_arg_parser():
 def main(args):
     """define your model, trainingsloop optimitzer etc. here"""
 
+    # Define the transform
+    resize_transform = transforms.Compose([
+        transforms.ToTensor(),          # Convert to tensor
+        transforms.Resize((256, 256)),  # Resize to 256x256
+    ])
+
     # data loading
-    dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic')
+    dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
+                         transform=resize_transform, target_transform=resize_transform)
 
     # visualize example images
 
