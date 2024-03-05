@@ -2,3 +2,4 @@ snellius_commands.txt
 ignore/
 data/
 .DS_Store
+*.out
