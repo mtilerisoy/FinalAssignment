@@ -1,6 +1,9 @@
 #!/bin/bash
-#SBATCH -t 0:20:00
-#SBATCH -N 1 -c 24
+#SBATCH --job-name="firsttest"
+#SBATCH --nodes=1
+#SBATCH --ntasks=10
+#SBATCH --time=00:01:00
+#SBATCH --partition=normal
 
 module load 2020
 module load Python/3.8.2-GCCcore-9.3.0
