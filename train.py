@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 import wandb
 import helpers
+import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -69,6 +70,7 @@ def main(args):
 
     # training/validation loop
     for epoch in range(wandb.config.epochs):
+        start_time = time.time()  # Start time of the epoch
         running_loss = 0.0
         for inputs, masks in dataset:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
@@ -81,11 +83,12 @@ def main(args):
 
             running_loss += loss.item()
 
+        epoch_time = time.time() - start_time  # Time taken for the epoch
         epoch_loss = running_loss / len(dataset)
-        wandb.log({"loss": epoch_loss})
+        wandb.log({"loss": epoch_loss, "time (m)": epoch_time/60})
 
         # Save the model every 10 epochs
-        if epoch % 10 == 0:
+        if epoch+1 % 10 == 0:
             torch.save(model.state_dict(), f'models/{args.model_version}_{epoch}.pth')
 
         
