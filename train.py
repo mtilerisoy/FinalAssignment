@@ -76,6 +76,7 @@ def main(args):
     for epoch in range(wandb.config.epochs):
         start_time = time.time()  # Start time of the epoch
         running_loss = 0.0
+        wandb.log({"Batch": start_time})
         for inputs, masks in dataloader:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
