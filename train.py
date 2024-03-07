@@ -79,7 +79,7 @@ def main(args):
         for inputs, masks in dataloader:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
-            outputs = model(inputs.unsqueeze(0))
+            outputs = model(inputs)
             masks = (masks * 255)
             loss = criterion(outputs, masks.long().squeeze())
             loss.backward()
