@@ -13,6 +13,7 @@ import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import DataLoader
 
 
 def get_arg_parser():
@@ -55,6 +56,9 @@ def main(args):
     dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
+    # Create a DataLoader with batch size of 32
+    dataloader = DataLoader(dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
+    
     # Print some information about the dataset and save to a file
     helpers.print_dataset_info(dataset)
 
@@ -72,7 +76,7 @@ def main(args):
     for epoch in range(wandb.config.epochs):
         start_time = time.time()  # Start time of the epoch
         running_loss = 0.0
-        for inputs, masks in dataset:
+        for inputs, masks in dataloader:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
             outputs = model(inputs.unsqueeze(0))
@@ -84,7 +88,7 @@ def main(args):
             running_loss += loss.item()
 
         epoch_time = time.time() - start_time  # Time taken for the epoch
-        epoch_loss = running_loss / len(dataset)
+        epoch_loss = running_loss / len(dataloader)
         wandb.log({"loss": epoch_loss, "time (m)": epoch_time/60})
 
         # Save the model every 10 epochs
