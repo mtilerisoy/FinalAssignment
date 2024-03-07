@@ -1,0 +1,6 @@
+<built-in method size of Tensor object at 0x14e0dcaab3d0> <built-in method size of Tensor object at 0x14e0dcace6b0>
+<class 'torch.Tensor'> <class 'torch.Tensor'>
+torch.Size([3, 256, 256]) torch.Size([1, 256, 256])
+torch.float32 torch.float32
+tensor(0.) tensor(1.) tensor(0.0039) tensor(0.1255)
+tensor(0.) tensor(255.) tensor(1.) tensor(32.)
