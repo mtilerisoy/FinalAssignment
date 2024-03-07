@@ -47,7 +47,7 @@ def main(args):
                          transform=resize_transform, target_transform=resize_transform)
     
     # Print some information about the dataset and save to a file
-    print_dataset_info(dataset, filename)
+    print_dataset_info(dataset)
 
     # visualize example images and labels
     for i in range(4):  # change this number to display more or fewer pairs
