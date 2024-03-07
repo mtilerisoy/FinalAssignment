@@ -8,8 +8,11 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 import wandb
-import random
 import helpers
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
 
 # start a new wandb run to track this script
 wandb.init(
@@ -52,24 +55,33 @@ def main(args):
     # visualize example images and labels
     helpers.visualize_dataset(dataset)  
     
-
     # define model
     model = Model().cuda()
 
     # define optimizer and loss function (don't forget to ignore class index 255)
-
+    criterion = nn.CrossEntropyLoss(ignore_index=255)
+    optimizer = optim.Adam(model.parameters(), lr=wandb.config.learning_rate)
 
     # training/validation loop
+    for epoch in range(wandb.config.epochs):
+        running_loss = 0.0
+        for inputs, masks in dataset:
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            masks = (masks * 255)
+            loss = criterion(outputs, masks.long().squeeze())
+            loss.backward()
+            optimizer.step()
 
-    # simulate a training
-    epochs = 10
-    offset = random.random() / 5
-    for epoch in range(2, epochs):
-        acc = 1 - 2 ** -epoch - random.random() / epoch - offset
-        loss = 2 ** -epoch + random.random() / epoch + offset
-        
-        # log metrics to wandb
-        wandb.log({"acc": acc, "loss": loss})
+            running_loss += loss.item()
+
+        epoch_loss = running_loss / len(dataset)
+        wandb.log({"loss": epoch_loss})
+
+        # Save the model every 10 epochs
+        if epoch % 10 == 0:
+            torch.save(model.state_dict(), f'models/version_1_epoch_{epoch}.pth')
+
         
     # [optional] finish the wandb run, necessary in notebooks
     wandb.finish()
