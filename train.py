@@ -60,7 +60,7 @@ def main(args):
     helpers.visualize_dataset(dataset)  
     
     # define model
-    model = Model().cuda()
+    model = Model().to(args.device)
 
     # define optimizer and loss function (don't forget to ignore class index 255)
     criterion = nn.CrossEntropyLoss(ignore_index=255)
@@ -70,6 +70,7 @@ def main(args):
     for epoch in range(wandb.config.epochs):
         running_loss = 0.0
         for inputs, masks in dataset:
+            inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
             outputs = model(inputs)
             masks = (masks * 255)
