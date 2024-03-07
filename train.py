@@ -14,30 +14,34 @@ import torch.nn as nn
 import torch.optim as optim
 
 
-# start a new wandb run to track this script
-wandb.init(
-    # set the wandb project where this run will be logged
-    project="5LSM0-FinalAssignment",
-    
-    # track hyperparameters and run metadata
-    config={
-    "learning_rate": 0.01,
-    "architecture": "Base U-Net Like",
-    "dataset": "CityScapes",
-    "epochs": 10,
-    }
-)
-
-
 def get_arg_parser():
     parser = ArgumentParser()
-    parser.add_argument("--data_path", type=str, default=".", help="Path to the data")
-    """add more arguments here and change the default values to your needs in the run_container.sh file"""
+    parser.add_argument("--data_path", type=str, default=".",            help="Path to the data")
+    parser.add_argument("--model_version", type=str, default="version_0",help="The version of the model")
+    parser.add_argument("--device", type=str, default="cuda",            help="The device to train the model on")
+    parser.add_argument("--learning_rate", type=float, default=0.01,     help="The learning rate for the optimizer")
+    parser.add_argument("--epochs", type=int, default=10,                help="The number of epochs to train the model")
     return parser
 
 
 def main(args):
     """define your model, trainingsloop optimitzer etc. here"""
+
+    # start a new wandb run to track this script
+    wandb.init(
+        # set the wandb project where this run will be logged
+        project="5LSM0-FinalAssignment",
+        
+        # track hyperparameters and run metadata
+        config={
+        "version": args.model_version,
+        "architecture": "Base U-Net Like",
+        "dataset": "CityScapes",
+        "device": args.device,
+        "learning_rate": args.learning_rate,
+        "epochs": args.epochs,
+        }
+    )
 
     # Define the transform
     resize_transform = transforms.Compose([
@@ -80,7 +84,7 @@ def main(args):
 
         # Save the model every 10 epochs
         if epoch % 10 == 0:
-            torch.save(model.state_dict(), f'models/version_1_epoch_{epoch}.pth')
+            torch.save(model.state_dict(), f'models/{args.model_version}_{epoch}.pth')
 
         
     # [optional] finish the wandb run, necessary in notebooks
