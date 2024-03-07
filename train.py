@@ -7,6 +7,21 @@ from torchvision.datasets import Cityscapes
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
+import wandb
+
+# start a new wandb run to track this script
+wandb.init(
+    # set the wandb project where this run will be logged
+    project="5LSM0-FinalAssignment",
+    
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": 0.01,
+    "architecture": "Base U-Net Like",
+    "dataset": "CityScapes",
+    "epochs": 10,
+    }
+)
 
 
 def get_arg_parser():
