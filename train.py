@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 import wandb
 import random
+import helpers
 
 # start a new wandb run to track this script
 wandb.init(
@@ -45,18 +46,8 @@ def main(args):
     dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
-    # print some information about the dataset
-    with open('output.txt', 'w') as f:
-        #dataset = Cityscapes(data_path, split='train', mode='fine', target_type='semantic')
-        img, smnt = dataset[0]
-        print(img.size, smnt.size, file=f)
-        print(type(img), type(smnt), file=f)
-        print(img.shape, smnt.shape, file=f)
-        print(img.dtype, smnt.dtype, file=f)
-        print(img.min(), img.max(), smnt.min(), smnt.max(), file=f)
-        img255 = img * 255
-        smnt255 = smnt * 255
-        print(img255.min(), img255.max(), smnt255.min(), smnt255.max(), file=f)
+    # Print some information about the dataset and save to a file
+    print_dataset_info(dataset, filename)
 
     # visualize example images and labels
     for i in range(4):  # change this number to display more or fewer pairs
