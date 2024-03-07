@@ -1,5 +1,6 @@
-snellius_commands.txt
-ignore/
-data/
+__pycache__/
 .DS_Store
 *.out
+ignore/
+data/
+wandb/
