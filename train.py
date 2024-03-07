@@ -72,7 +72,7 @@ def main(args):
         for inputs, masks in dataset:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model(inputs.unsqueeze(0))
             masks = (masks * 255)
             loss = criterion(outputs, masks.long().squeeze())
             loss.backward()
