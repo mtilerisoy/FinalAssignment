@@ -50,28 +50,7 @@ def main(args):
     helpers.print_dataset_info(dataset)
 
     # visualize example images and labels
-    for i in range(4):  # change this number to display more or fewer pairs
-        image, label = dataset[i]
-        
-        # PyTorch tensors for images usually have the channels dimension first,
-        # but matplotlib expects the channels dimension last.
-        # So, we need to rearrange the dimensions using permute.
-        image = image.permute(1, 2, 0)
-        label = label.permute(1, 2, 0)
-        
-        fig, ax = plt.subplots(1, 2, figsize=(10, 5))  # Adjust the size as needed
-        ax[0].imshow(image)
-        ax[0].set_title('Image')
-        
-        # Assuming the label is a PyTorch tensor, we need to convert it to numpy
-        label = label.numpy()
-        ax[1].imshow(label)
-        ax[1].set_title('Label')
-
-        # Save the figure
-        plt.savefig(f'visualization/image_and_label_{i}.png')
-        
-        plt.show()    
+    helpers.visualize_dataset(dataset)  
     
 
     # define model
