@@ -94,7 +94,7 @@ def main(args):
 
         # Save the model every 10 epochs
         if (epoch+1) % 10 == 0:
-            print(f"Model saved at models/{wandb.config.model_version}_{epoch}.pth")
+            print(f"Model saved at models/{args.model_version}_{epoch}.pth")
             torch.save(model.state_dict(), f'models/{args.model_version}_{epoch}.pth')
 
         
