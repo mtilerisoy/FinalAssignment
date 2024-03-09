@@ -52,18 +52,26 @@ def main(args):
         transforms.Resize((256, 256)),  # Resize to 256x256
     ])
 
-    # data loading
-    dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
+    # Load the training data
+    train_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
-    # Create a DataLoader with batch size of 32
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
+    # Create a DataLoader object with batch size of 32
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
+
+    # Load the validation data
+    val_dataset = Cityscapes(args.data_path, split='val', mode='fine', target_type='semantic',
+                         transform=resize_transform, target_transform=resize_transform)
+    
+    # Create a DataLoader object with batch size of 32
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
+    
     
     # Print some information about the dataset and save to a file
-    helpers.print_dataset_info(dataset)
+    #helpers.print_dataset_info(dataset)
 
     # visualize example images and labels
-    helpers.visualize_dataset(dataset)  
+    #helpers.visualize_dataset(dataset)  
     
     # define model
     model = Model().to(args.device)
@@ -77,7 +85,7 @@ def main(args):
         start_time = time.time()  # Start time of the epoch
         running_loss = 0.0
         wandb.log({"Batch": start_time})
-        for inputs, masks in dataloader:
+        for inputs, masks in train_loader:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
             outputs = model(inputs)
@@ -89,7 +97,7 @@ def main(args):
             running_loss += loss.item()
 
         epoch_time = time.time() - start_time  # Time taken for the epoch
-        epoch_loss = running_loss / len(dataloader)
+        epoch_loss = running_loss / len(train_loader)
         wandb.log({"loss": epoch_loss, "time (m)": epoch_time/60})
 
         # Save the model every 10 epochs
