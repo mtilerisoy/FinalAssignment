@@ -70,21 +70,27 @@ def main(args):
     # Print some information about the dataset and save to a file
     #helpers.print_dataset_info(dataset)
 
-    # visualize example images and labels
+    # Visualize example images and labels
     #helpers.visualize_dataset(dataset)  
     
-    # define model
+
+    # Define model
     model = Model().to(args.device)
 
-    # define optimizer and loss function (don't forget to ignore class index 255)
+    # Define optimizer and loss function (don't forget to ignore class index 255)
     criterion = nn.CrossEntropyLoss(ignore_index=255)
     optimizer = optim.Adam(model.parameters(), lr=wandb.config.learning_rate)
 
     # training/validation loop
     for epoch in range(wandb.config.epochs):
-        start_time = time.time()  # Start time of the epoch
+        # Start time of the epoch
+        start_time = time.time()
+        
+        # Initialize the running loss
         running_loss = 0.0
-        wandb.log({"Batch": start_time})
+        
+        # Set the model to train mode
+        model.train()
         for inputs, masks in train_loader:
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
@@ -96,9 +102,26 @@ def main(args):
 
             running_loss += loss.item()
 
+        # Set the model to evaluation mode
+        model.eval()
+
+        # Validation loop
+        with torch.no_grad():
+            val_loss = 0.0
+            for inputs, masks in val_loader:
+                inputs, masks = inputs.to(args.device), masks.to(args.device)
+                outputs = model(inputs)
+                masks = (masks * 255)
+                loss = criterion(outputs, masks.long().squeeze())
+                
+                val_loss += loss.item()
+        
+        # Log the loss and time taken for the epoch
         epoch_time = time.time() - start_time  # Time taken for the epoch
         epoch_loss = running_loss / len(train_loader)
-        wandb.log({"loss": epoch_loss, "time (m)": epoch_time/60})
+        wandb.log({"Training Loss": epoch_loss,
+                   "Validation Loss": val_loss,
+                   "Time Took per Epoch (m)": epoch_time/60})
 
         # Save the model every 10 epochs
         if (epoch+1) % 10 == 0:
