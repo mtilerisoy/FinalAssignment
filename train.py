@@ -102,25 +102,25 @@ def main(args):
 
             running_loss += loss.item()
 
-        # Set the model to evaluation mode
-        model.eval()
+        # # Set the model to evaluation mode
+        # model.eval()
 
-        # Validation loop
-        with torch.no_grad():
-            val_loss = 0.0
-            for inputs, masks in val_loader:
-                inputs, masks = inputs.to(args.device), masks.to(args.device)
-                outputs = model(inputs)
-                masks = (masks * 255)
-                loss = criterion(outputs, masks.long().squeeze())
+        # # Validation loop
+        # with torch.no_grad():
+        #     val_loss = 0.0
+        #     for inputs, masks in val_loader:
+        #         inputs, masks = inputs.to(args.device), masks.to(args.device)
+        #         outputs = model(inputs)
+        #         masks = (masks * 255)
+        #         loss = criterion(outputs, masks.long().squeeze())
                 
-                val_loss += loss.item()
+        #         val_loss += loss.item()
         
         # Log the loss and time taken for the epoch
         epoch_time = time.time() - start_time  # Time taken for the epoch
         epoch_loss = running_loss / len(train_loader)
         wandb.log({"Training Loss": epoch_loss,
-                   "Validation Loss": val_loss,
+                   #"Validation Loss": val_loss,
                    "Time Took per Epoch (m)": epoch_time/60})
 
         # Save the model every 10 epochs
