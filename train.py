@@ -98,7 +98,7 @@ def main(args):
             outputs = model(inputs)
             masks = (masks * 255).long().squeeze()
             masks = utils.map_id_to_train_id(masks).to(args.device)
-            loss = criterion(outputs, masks.long().squeeze())
+            loss = criterion(outputs, masks)
             loss.backward()
             optimizer.step()
 
