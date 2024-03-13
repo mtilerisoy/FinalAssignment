@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import utils
 
 
 def get_arg_parser():
@@ -59,12 +60,12 @@ def main(args):
     # Create a DataLoader object with batch size of 32
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
 
-    # Load the validation data
-    val_dataset = Cityscapes(args.data_path, split='val', mode='fine', target_type='semantic',
-                         transform=resize_transform, target_transform=resize_transform)
+    # # Load the validation data
+    # val_dataset = Cityscapes(args.data_path, split='val', mode='fine', target_type='semantic',
+    #                      transform=resize_transform, target_transform=resize_transform)
     
-    # Create a DataLoader object with batch size of 32
-    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
+    # # Create a DataLoader object with batch size of 32
+    # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
     
     
     # Print some information about the dataset and save to a file
@@ -95,7 +96,8 @@ def main(args):
             inputs, masks = inputs.to(args.device), masks.to(args.device)
             optimizer.zero_grad()
             outputs = model(inputs)
-            masks = (masks * 255)
+            masks = (masks * 255).long().squeeze()
+            masks = utils.map_id_to_train_id(masks).to(args.device)
             loss = criterion(outputs, masks.long().squeeze())
             loss.backward()
             optimizer.step()
