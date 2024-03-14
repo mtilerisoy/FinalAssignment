@@ -10,4 +10,5 @@ torchrun --nnodes=1 --nproc_per_node=1 train.py \
          --model_version "1" \
          --device "cuda" \
          --learning_rate 0.01 \
-         --epochs 50
+         --epochs 100 \
+         --batch_size 16
