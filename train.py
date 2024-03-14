@@ -112,18 +112,20 @@ def main(args):
 
         # Validation loop
         with torch.no_grad():
-            val_loss = 0.0
+            val_running_loss = 0.0
             for inputs, masks in val_loader:
                 inputs, masks = inputs.to(args.device), masks.to(args.device)
                 outputs = model(inputs)
-                masks = (masks * 255)
+                masks = (masks * 255).long().squeeze()
+                masks = utils.map_id_to_train_id(masks).to(args.device)
                 loss = criterion(outputs, masks.long().squeeze())
                 
-                val_loss += loss.item()
+                val_running_loss += loss.item()
         
         # Log the loss and time taken for the epoch
         epoch_time = time.time() - start_time  # Time taken for the epoch
         epoch_loss = running_loss / len(train_loader)
+        val_loss = val_running_loss / len(val_loader)
         wandb.log({"Training Loss": epoch_loss,
                    "Validation Loss": val_loss,
                    "Time Took per Epoch (m)": epoch_time/60,
