@@ -20,12 +20,12 @@ from torch.utils.data import random_split
 
 def get_arg_parser():
     parser = ArgumentParser()
-    parser.add_argument("--data_path",      type=str, default=".",       help="Path to the data")
-    parser.add_argument("--model_version",  type=str, default="1",   help="The version of the model")
-    parser.add_argument("--device",         type=str, default="cuda",       help="The device to train the model on")
-    parser.add_argument("--learning_rate",  type=float, default=0.01,help="The learning rate for the optimizer")
-    parser.add_argument("--epochs",         type=int, default=10,           help="The number of epochs to train the model")
-    parser.add_argument("--batch_size",     type=int, default=32,           help="The batch size to use in the data loaders")
+    parser.add_argument("--data_path",      type=str, default=".",      help="Path to the data")
+    parser.add_argument("--model_version",  type=str, default="1",      help="The version of the model")
+    parser.add_argument("--device",         type=str, default="cuda",   help="The device to train the model on")
+    parser.add_argument("--learning_rate",  type=float, default=0.01,   help="The learning rate for the optimizer")
+    parser.add_argument("--epochs",         type=int, default=10,       help="The number of epochs to train the model")
+    parser.add_argument("--batch_size",     type=int, default=32,       help="The batch size to use in the data loaders")
     return parser
 
 
