@@ -36,7 +36,7 @@ def main(args):
     wandb.init(
         # set the wandb project where this run will be logged
         project="5LSM0-FinalAssignment",
-        name = "snellius_training_run_"+args.model_version,
+        name = "snellius-"+args.model_version,
         
         # track hyperparameters and run metadata
         config={
