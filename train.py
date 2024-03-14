@@ -25,6 +25,7 @@ def get_arg_parser():
     parser.add_argument("--device",         type=str, default="cuda",       help="The device to train the model on")
     parser.add_argument("--learning_rate",  type=float, default=0.01,help="The learning rate for the optimizer")
     parser.add_argument("--epochs",         type=int, default=10,           help="The number of epochs to train the model")
+    parser.add_argument("--batch_size",     type=int, default=32,           help="The batch size to use in the data loaders")
     return parser
 
 
@@ -45,6 +46,7 @@ def main(args):
         "device": args.device,
         "learning_rate": args.learning_rate,
         "epochs": args.epochs,
+        "batch_size": args.batch_size
         }
     )
 
@@ -66,16 +68,8 @@ def main(args):
     train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
 
     # Create DataLoaders for training and validation sets
-    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=8, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False, num_workers=4, pin_memory=True)
-
-    # # Load the validation data
-    # val_dataset = Cityscapes(args.data_path, split='val', mode='fine', target_type='semantic',
-    #                      transform=resize_transform, target_transform=resize_transform)
-    
-    # # Create a DataLoader object with batch size of 32
-    # val_loader = DataLoader(val_dataset, batch_size=32, shuffle=True, num_workers=8, pin_memory=True)
-    
     
     # Print some information about the dataset and save to a file
     #helpers.print_dataset_info(dataset)
