@@ -1,16 +1,20 @@
 import matplotlib.pyplot as plt
-
+import torchvision.transforms as transforms
+import torchvision.transforms.functional as TF
+import random
 
 def print_dataset_info(dataset, filename='output.txt'):
     """
     Prints information about the dataset to a file.
 
     Parameters:
-                dataset: Pytorch Dataset object
-                filename: str
+    ----------
+            dataset     : Pytorch Dataset object
+            filename    : str
     
     Returns:
-                None
+    --------
+            None
     """
     
     with open(filename, 'w') as f:
@@ -39,12 +43,14 @@ def visualize_dataset(dataset, num_pairs=4):
     """
     Visualizes and SAVE a few images and their corresponding segmentation maps from the dataset.
 
-    Parameters:
-                dataset: Pytorch Dataset object
-                num_pairs: int  (default: 4)
+    Parameters
+    ----------
+            dataset     : Pytorch Dataset object
+            num_pairs   : int  (default: 4)
 
-    Returns:
-                None
+    Returns
+    -------
+            None
     """
     for i in range(num_pairs):
         image, label = dataset[i]
@@ -68,3 +74,77 @@ def visualize_dataset(dataset, num_pairs=4):
         plt.savefig(f'visualization/image_and_label_{i}.png')
         
         plt.show()  
+
+class RandomTransform:
+    """
+    A class used to apply random transformations to both an image and its corresponding target.
+
+    Attributes
+    ----------
+                size : tuple
+                    the desired size after resizing the image and target
+                p : float
+                    the probability of applying the random transformations
+
+    Methods
+    -------
+                __call__(image, target)
+                    Applies the transformations to the image and target.
+    """
+
+    def __init__(self, size, p=0.5):
+        """
+        Construction for the class.
+
+        Parameters
+        ----------
+                    size    : tuple
+                            the desired size after resizing the image and target
+                    p       : float
+                            the probability of applying the random transformations
+        """
+        self.size = size
+        self.p = p
+
+    def __call__(self, image, target):
+        """
+        Applies the transformations to the image and target.
+
+        Parameters
+        ----------
+                    image   : PIL Image
+                            the image to be transformed
+                    target  : PIL Image
+                            the target to be transformed
+
+        Returns
+        -------
+                    tuple   : the transformed image and target
+        """
+        
+        # Resize
+        resize = transforms.Resize(self.size)
+        image = resize(image)
+        target = resize(target)
+
+        # Random horizontal flipping
+        if random.random() < self.p:
+            image = TF.hflip(image)
+            target = TF.hflip(target)
+
+        # Random vertical flipping
+        if random.random() < self.p:
+            image = TF.vflip(image)
+            target = TF.vflip(target)
+
+        # Random rotation
+        angle = transforms.RandomRotation.get_params([-20, 20])
+        image = TF.rotate(image, angle)
+        target = TF.rotate(target, angle)
+
+        # Convert to tensor
+        tensor_transform = transforms.ToTensor()
+        image = tensor_transform(image)
+        target = tensor_transform(target)
+
+        return image, target
