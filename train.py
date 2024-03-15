@@ -15,7 +15,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import utils
-from torch.utils.data import random_split
+from torch.utils.data import random_split, ConcatDataset
 
 
 def get_arg_parser():
@@ -56,16 +56,25 @@ def main(args):
         transforms.Resize((256, 256)),  # Resize to 256x256
     ])
 
+    # Define the transform for data augmentation
+    augmentation = helpers.RandomTransform(size=(256, 256), p=1.0)
+
     # Load the training data
-    dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
+    original_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
+    augmented_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
+                               transforms=augmentation)
+
+    # Concatenate the original and augmented datasets
+    train_dataset = ConcatDataset([original_dataset, augmented_dataset])
+
     # Define the size of the validation set
-    val_size = int(0.2 * len(dataset))  # 20% for validation
-    train_size = len(dataset) - val_size
+    val_size = int(0.2 * len(train_dataset))  # 20% for validation
+    train_size = len(train_dataset) - val_size
 
     # Split the dataset
-    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+    train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size])
 
     # Create DataLoaders for training and validation sets
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=8, pin_memory=True)
@@ -76,7 +85,6 @@ def main(args):
 
     # Visualize example images and labels
     #helpers.visualize_dataset(dataset)  
-    
 
     # Define model
     model = Model().to(args.device)
