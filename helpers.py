@@ -81,15 +81,15 @@ class RandomTransform:
 
     Attributes
     ----------
-                size : tuple
-                    the desired size after resizing the image and target
-                p : float
-                    the probability of applying the random transformations
+            size : tuple
+                the desired size after resizing the image and target
+            p : float
+                the probability of applying the random transformations
 
     Methods
     -------
-                __call__(image, target)
-                    Applies the transformations to the image and target.
+            __call__(image, target)
+                Applies the transformations to the image and target.
     """
 
     def __init__(self, size, p=0.5):
@@ -98,10 +98,10 @@ class RandomTransform:
 
         Parameters
         ----------
-                    size    : tuple
-                            the desired size after resizing the image and target
-                    p       : float
-                            the probability of applying the random transformations
+                size    : tuple
+                        the desired size after resizing the image and target
+                p       : float
+                        the probability of applying the random transformations
         """
         self.size = size
         self.p = p
@@ -112,14 +112,14 @@ class RandomTransform:
 
         Parameters
         ----------
-                    image   : PIL Image
-                            the image to be transformed
-                    target  : PIL Image
-                            the target to be transformed
+                image   : PIL Image
+                        the image to be transformed
+                target  : PIL Image
+                        the target to be transformed
 
         Returns
         -------
-                    tuple   : the transformed image and target
+                tuple   : the transformed image and target
         """
         
         # Resize
