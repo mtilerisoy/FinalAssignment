@@ -107,9 +107,9 @@ class RandomTransform:
         self.p = p
         self.angle = angle
         self.jitter = jitter
-        self.brightness = [brightness*0.5, brightness]
-        self.contrast = [contrast*0.5, contrast]
-        self.saturation = [saturation*0.5, saturation]
+        self.brightness = brightness #[brightness*0.5, brightness]
+        self.contrast = contrast #[contrast*0.5, contrast]
+        self.saturation = saturation #saturation*0.5, saturation]
         self.hue = hue
 
     def __call__(self, image, target):
