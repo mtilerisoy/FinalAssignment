@@ -26,6 +26,8 @@ def get_arg_parser():
     parser.add_argument("--learning_rate",  type=float, default=0.01,   help="The learning rate for the optimizer")
     parser.add_argument("--epochs",         type=int, default=10,       help="The number of epochs to train the model")
     parser.add_argument("--batch_size",     type=int, default=32,       help="The batch size to use in the data loaders")
+    parser.add_argument("--cont",           type=bool, default=False,   help="Load a pre-trained model and continue training")
+    parser.add_argument("--model_path",     type=str, default="models/model.pth",   help="path to pre-trained model")
     return parser
 
 
@@ -57,17 +59,21 @@ def main(args):
     ])
 
     # Define the transform for data augmentation
-    augmentation = helpers.RandomTransform(size=(256, 256), p=1.0)
+    rotation = helpers.RandomTransform(size=(256, 256), p=0.5, angle=60, jitter=False)
+    color_jitter = helpers.RandomTransform(size=(256, 256), p=0.0, angle=30, jitter=True, brightness=0.3, contrast=[0.4,0.5], saturation=0.0, hue=0.10)
 
     # Load the training data
     original_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
-    augmented_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
-                               transforms=augmentation)
+    rotated_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
+                               transforms=rotation)
+    
+    jittered_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
+                               transforms=color_jitter)
 
     # Concatenate the original and augmented datasets
-    train_dataset = ConcatDataset([original_dataset, augmented_dataset])
+    train_dataset = ConcatDataset([original_dataset, rotated_dataset, jittered_dataset])
 
     # Define the size of the validation set
     val_size = int(0.2 * len(train_dataset))  # 20% for validation
@@ -86,7 +92,13 @@ def main(args):
     # Visualize example images and labels
     #helpers.visualize_dataset(dataset)  
 
-    # Define model
+    # # Define model
+    # if args.cont:
+    #     model = torch.load(args.model_path)
+    #     model = model.to(args.device)
+    # else:
+    #     model = Model().to(args.device)
+    
     model = Model().to(args.device)
 
     # Define optimizer and loss function (don't forget to ignore class index 255)
