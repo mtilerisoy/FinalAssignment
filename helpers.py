@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as TF
 import random
+import torch
+import torch.nn as nn
 
 def print_dataset_info(dataset, filename='output.txt'):
     """
@@ -74,6 +76,7 @@ def visualize_dataset(dataset, num_pairs=4):
         plt.savefig(f'visualization/image_and_label_{i}.png')
         
         plt.show()  
+
 
 class RandomTransform:
     """
@@ -160,3 +163,36 @@ class RandomTransform:
         target = tensor_transform(target)
 
         return image, target
+
+
+class MultiClassDiceLoss(nn.Module):
+    def __init__(self, weights=None, ignore_index=255, eps=1e-7):
+        super(MultiClassDiceLoss, self).__init__()
+        self.weights = weights
+        self.ignore_index = ignore_index
+        self.eps = eps
+
+    def forward(self, output, target):
+        # Apply softmax to output
+        m = torch.nn.Softmax(dim=1)
+        output = m(output)
+
+        # set the ignored class label to -1
+        target[target == self.ignore_index] = -1
+
+        # convert to one-hot encoding
+        target = torch.nn.functional.one_hot(target, num_classes=output.shape[1]).permute(0, 3, 1, 2).float()
+
+        # compute the actual dice score for each class
+        intersect = (output * target).sum(dim=(2, 3))
+        denominator = (output + target).sum(dim=(2, 3))
+
+        dice = (2. * intersect + self.eps) / (denominator + self.eps)
+
+        # calculate loss for each class and then average
+        dice_loss = 1 - dice
+        if self.weights is not None:
+            weighted_dice_loss = dice_loss * self.weights
+            return weighted_dice_loss.mean()
+        else:
+            return dice_loss.mean()
