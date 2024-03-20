@@ -166,33 +166,35 @@ class RandomTransform:
 
 
 class MultiClassDiceLoss(nn.Module):
-    def __init__(self, weights=None, ignore_index=255, eps=1e-7):
+    def __init__(self, ignore_index=255, log_loss=False):
         super(MultiClassDiceLoss, self).__init__()
-        self.weights = weights
-        self.ignore_index = ignore_index
-        self.eps = eps
+        self.ingore_index = ignore_index
+        self.log_loss = log_loss
 
-    def forward(self, output, target):
-        # Apply softmax to output
-        m = torch.nn.Softmax(dim=1)
-        output = m(output)
+    def forward(self, input, target):
+        smooth = 1.0
 
-        # set the ignored class label to -1
-        target[target == self.ignore_index] = -1
+        # Apply softmax to input (model output)
+        input = torch.softmax(input, dim=1)
 
-        # convert to one-hot encoding
-        target = torch.nn.functional.one_hot(target, num_classes=output.shape[1]).permute(0, 3, 1, 2).float()
+        dice_loss = 0.0
 
-        # compute the actual dice score for each class
-        intersect = (output * target).sum(dim=(2, 3))
-        denominator = (output + target).sum(dim=(2, 3))
+        for class_index in range(input.size(1)):
+            #valid = (target != self.ingore_index)
+            valid = target.ne(self.ingore_index)
+            # input_flat = input[:, class_index, :, :][valid].contiguous().view(-1)
+            # target_flat = (target == class_index)[valid].contiguous().view(-1) # binary target for class_index
+            input_flat = input[:, class_index, :, :][valid].view(-1)
+            target_flat = (target == class_index)[valid].view(-1) # binary target for class_index
 
-        dice = (2. * intersect + self.eps) / (denominator + self.eps)
+            intersection = (input_flat * target_flat).sum()
 
-        # calculate loss for each class and then average
-        dice_loss = 1 - dice
-        if self.weights is not None:
-            weighted_dice_loss = dice_loss * self.weights
-            return weighted_dice_loss.mean()
-        else:
-            return dice_loss.mean()
+            dice_loss += 1 - ((2. * intersection + smooth) / (input_flat.sum() + target_flat.sum() + smooth))
+        
+        
+        mean_dice = dice_loss/input.size(1) # average loss over all classes
+
+        if self.log_loss:
+            mean_dice = -torch.log(mean_dice)
+
+        return mean_dice
