@@ -66,15 +66,16 @@ def main(args):
     original_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
-    rotated_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
-                               transforms=rotation)
+    # rotated_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
+    #                            transforms=rotation)
     
-    jittered_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
-                               transforms=color_jitter)
+    # jittered_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
+    #                            transforms=color_jitter)
 
-    # Concatenate the original and augmented datasets
-    train_dataset = ConcatDataset([original_dataset, rotated_dataset, jittered_dataset])
-
+    # # Concatenate the original and augmented datasets
+    # train_dataset = ConcatDataset([original_dataset, rotated_dataset, jittered_dataset])
+    train_dataset = original_dataset
+    
     # Define the size of the validation set
     val_size = int(0.2 * len(train_dataset))  # 20% for validation
     train_size = len(train_dataset) - val_size
