@@ -55,26 +55,24 @@ def main(args):
     # Define the transform
     resize_transform = transforms.Compose([
         transforms.ToTensor(),          # Convert to tensor
-        transforms.Resize((256, 256)),  # Resize to 256x256
+        transforms.Resize((256, 256), antialias=True),  # Resize to 256x256
     ])
 
     # Define the transform for data augmentation
-    rotation = helpers.RandomTransform(size=(256, 256), p=0.5, angle=60, jitter=False)
-    color_jitter = helpers.RandomTransform(size=(256, 256), p=0.0, angle=30, jitter=True, brightness=0.3, contrast=[0.4,0.5], saturation=0.0, hue=0.10)
+    rotation = helpers.RandomTransform(size=(256, 256), p=0.9, angle=30, jitter=False)
 
     # Load the training data
     original_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic',
                          transform=resize_transform, target_transform=resize_transform)
     
-    # rotated_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
-    #                            transforms=rotation)
+    rotated_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
+                               transforms=rotation)
     
     # jittered_dataset = Cityscapes(args.data_path, split='train', mode='fine', target_type='semantic', 
     #                            transforms=color_jitter)
 
-    # # Concatenate the original and augmented datasets
-    # train_dataset = ConcatDataset([original_dataset, rotated_dataset, jittered_dataset])
-    train_dataset = original_dataset
+    # Concatenate the original and augmented datasets
+    train_dataset = ConcatDataset([original_dataset, rotated_dataset])
     
     # Define the size of the validation set
     val_size = int(0.2 * len(train_dataset))  # 20% for validation
