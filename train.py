@@ -55,7 +55,7 @@ def main(args):
     # Define the transform
     resize_transform = transforms.Compose([
         transforms.ToTensor(),          # Convert to tensor
-        transforms.Resize((256, 256), antialias=True),  # Resize to 256x256
+        transforms.Resize((256, 256), antialias=False),  # Resize to 256x256
     ])
 
     # Define the transform for data augmentation

@@ -132,7 +132,7 @@ class RandomTransform:
         """
         
         # Resize
-        resize = transforms.Resize(self.size, antialias=True)
+        resize = transforms.Resize(self.size, antialias=False)
         image = resize(image)
         target = resize(target)
 
