@@ -103,8 +103,8 @@ def main(args):
     model = Model().to(args.device)
 
     # Define optimizer and loss function (don't forget to ignore class index 255)
-    #criterion = nn.CrossEntropyLoss(ignore_index=255)
-    criterion = helpers.MultiClassDiceLoss(ignore_index=255)
+    criterion = nn.CrossEntropyLoss(ignore_index=255, )
+    # criterion = helpers.MultiClassDiceLoss(ignore_index=255)
     optimizer = optim.Adam(model.parameters(), lr=wandb.config.learning_rate)
 
     # training/validation loop
