@@ -27,7 +27,7 @@ def get_arg_parser():
     parser.add_argument("--epochs",         type=int, default=10,       help="The number of epochs to train the model")
     parser.add_argument("--batch_size",     type=int, default=32,       help="The batch size to use in the data loaders")
     parser.add_argument("--cont",           type=bool, default=False,   help="Load a pre-trained model and continue training")
-    parser.add_argument("--model_path",     type=str, default="models/model.pth",   help="path to pre-trained model")
+    parser.add_argument("--model_path",     type=str, default="models/pretrained.pth",   help="path to pre-trained model")
     return parser
 
 
@@ -91,14 +91,14 @@ def main(args):
     # Visualize example images and labels
     #helpers.visualize_dataset(dataset)  
 
-    # # Define model
-    # if args.cont:
-    #     model = torch.load(args.model_path)
-    #     model = model.to(args.device)
-    # else:
-    #     model = Model().to(args.device)
+    # Define model
+    if args.cont:
+        model = torch.load(args.model_path)
+        model = model.to(args.device)
+    else:
+        model = Model().to(args.device)
     
-    model = Model().to(args.device)
+    # model = Model().to(args.device)
 
     # Define optimizer and loss function (don't forget to ignore class index 255)
     criterion = nn.CrossEntropyLoss(ignore_index=255, )
