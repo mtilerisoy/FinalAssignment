@@ -95,7 +95,7 @@ class RandomTransform:
                 Applies the transformations to the image and target.
     """
 
-    def __init__(self, size, p=0.5, angle=20, jitter=True, brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1):
+    def __init__(self, size, p=0.5, angle=30, jitter=False, brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1):
         """
         Construction for the class.
 
@@ -141,10 +141,10 @@ class RandomTransform:
             image = TF.hflip(image)
             target = TF.hflip(target)
 
-        # Random vertical flipping
-        if random.random() < self.p:
-            image = TF.vflip(image)
-            target = TF.vflip(target)
+        # # Random vertical flipping
+        # if random.random() < self.p:
+        #     image = TF.vflip(image)
+        #     target = TF.vflip(target)
 
         # Random rotation
         angle = transforms.RandomRotation.get_params([-1*self.angle, self.angle])
