@@ -4,3 +4,4 @@ __pycache__/
 ignore/
 data/
 wandb/
+visualization/
