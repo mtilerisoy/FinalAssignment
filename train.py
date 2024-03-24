@@ -93,8 +93,8 @@ def main(args):
 
     # Define model
     if args.cont:
-        model = torch.load(args.model_path)
-        model = model.to(args.device)
+        model = Model()
+        model.load_state_dict(torch.load(args.model_path, map_location=torch.device(args.device)))
     else:
         model = Model().to(args.device)
     
