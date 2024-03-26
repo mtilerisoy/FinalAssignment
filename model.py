@@ -267,8 +267,8 @@ class UpsamplingBottleneck(nn.Module):
 
         return self.out_prelu(out)
 
-class ENet(nn.Module):
-    def __init__(self, classes, encoder_relu=False, decoder_relu=True):
+class Model(nn.Module):
+    def __init__(self, classes=19, encoder_relu=False, decoder_relu=True):
         super().__init__()
         # source code
         self.name='BaseLine_ENet_trans'
