@@ -94,13 +94,13 @@ def main(args):
     #helpers.visualize_dataset(dataset)  
 
     # Define model
-    if args.cont:
-        model = Model().to(args.device)
-        model.load_state_dict(torch.load(args.model_path, map_location=torch.device(args.device)))
-    else:
-        model = Model().to(args.device)
+    # if args.cont:
+    #     model = Model().to(args.device)
+    #     model.load_state_dict(torch.load(args.model_path, map_location=torch.device(args.device)))
+    # else:
+    #     model = Model().to(args.device)
     
-    # model = Model().to(args.device)
+    model = Model().to(args.device)
 
     # Define optimizer and loss function (don't forget to ignore class index 255)
     criterion = nn.CrossEntropyLoss(ignore_index=255, )
