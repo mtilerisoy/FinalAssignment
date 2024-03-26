@@ -28,6 +28,7 @@ def get_arg_parser():
     parser.add_argument("--batch_size",     type=int, default=32,       help="The batch size to use in the data loaders")
     parser.add_argument("--cont",           type=bool, default=False,   help="Load a pre-trained model and continue training")
     parser.add_argument("--model_path",     type=str, default="models/pretrained.pth",   help="path to pre-trained model")
+    parser.add_argument("--architecture",   type=str, default="Base U-Net",   help="Model Architecture")
     return parser
 
 
@@ -43,7 +44,7 @@ def main(args):
         # track hyperparameters and run metadata
         config={
         "version": args.model_version,
-        "architecture": "Base U-Net Like",
+        "architecture": args.architecture,
         "dataset": "CityScapes",
         "device": args.device,
         "learning_rate": args.learning_rate,
