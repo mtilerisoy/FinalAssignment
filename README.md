@@ -118,7 +118,7 @@ code from desired **model-XXX.py** script into **model.py**.
 
 ```bash
 @misc{Efficiency-Improvements
-  author = {Mustafa Talha Ilerisoy},
+  author = {Mustafa Talha Ilerisoy, Tim Jaspers, Cris Claessens, Koen Kusters},
   title = {Efficiency Improvements of Deep Semantic Segmentation Models},
   year = {2024},
   publisher = {GitHub},
