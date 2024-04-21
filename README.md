@@ -76,7 +76,7 @@ Here's a brief overview of the files you'll find in this repository:
 - **process_data.py:** Contains the functions for preprocessing images into PyTorch tensors suitable for model training, and postprocessing model predictions back into image format.
 
 
-- **analyze.ipynb** This notebook has the necessary functions to visualize, analyze, and process a pretrained model.
+- **analyze.ipynb** This notebook has the necessary functions to load, visualize the segmentation, analyze the parameters, and process a pre-trained model.
 
 ## Command Line Arguments
 
