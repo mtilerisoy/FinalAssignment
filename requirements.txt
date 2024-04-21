@@ -5,3 +5,4 @@ torchvision==0.16.2
 torchmetrics==1.3.1
 torchsummary==1.5.1
 wandb==0.16.4
+ptflops==0.7.2.2
